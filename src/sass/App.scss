@@ -1,0 +1,46 @@
+/*
+** = App
+** - This is app.scss file.
+** - Import all other partial sass files here.
+*/
+
+// - ABSTRACT
+@import "abstract/variables";
+@import "abstract/functions";
+@import "abstract/mixins";
+
+// - BASE
+@import "base/base";
+@import "base/animations";
+@import "base/typography";
+@import "base/utility";
+
+
+// - COMPONENTS
+@import 'components/navigation';
+
+
+
+//APP 
+.App {
+    text-align: center;
+    
+    &-header {
+      background-color: #282c34;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(10px + 2vmin);
+      color: white;
+    }
+    
+    &-link {
+      color: #000;
+    }
+    
+  }
+  
+  
+
