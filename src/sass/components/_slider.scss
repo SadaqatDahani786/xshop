@@ -1,0 +1,25 @@
+.slider{
+    background-color: red;
+    width: 100%;    
+    overflow: hidden;
+    &__container{
+        display: flex;         
+        width:100%;
+        transition: all .6s ease;
+    }
+    &__slides{
+        flex: 0 0 100%;
+        color: white;
+        background-color: gray;
+        overflow: hidden;
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        & img{
+            width: 100%;                
+            height: auto;
+            display: flex;            
+        }
+    }
+}

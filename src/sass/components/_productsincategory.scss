@@ -1,0 +1,29 @@
+.sectionproducts{    
+    $self: &;
+    background-size: cover;
+    min-height: 100vh;        
+    &:not(:first-child){
+        padding: 6rem 0;
+    }
+    #{$self}:nth-child(1){
+        background-color:red !important;
+    }    
+    background: transparent !important;
+    position: relative;
+    z-index: 100;
+    
+    h2{        
+        &::first-letter{
+            font-size: 15rem;
+            font-weight: 600;
+            color: $colorThemeTertiary;            
+        }                
+        text-decoration: underline;
+        text-decoration-color: $colorThemeTertiary;
+        background-color: $colorThemeSecondary;        
+        text-transform: capitalize;
+        width: 95%;
+        padding: 2.5rem 0;
+        margin: 0 auto;
+    }
+}

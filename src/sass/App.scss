@@ -18,6 +18,15 @@
 
 // - COMPONENTS
 @import 'components/navigation';
+@import 'components/_header.scss';
+@import 'components/logo';
+@import 'components/searchbar';
+@import 'components/navbuttons';
+@import 'components/slider';
+@import 'components/productsgrid';
+@import 'components/product';
+@import 'components/productsincategory';
+@import 'components/tilesgrid';
 
 
 
@@ -26,7 +35,7 @@
     text-align: center;
     
     &-header {
-      background-color: #282c34;
+      background-color: $colorThemePrimary;
       min-height: 100vh;
       display: flex;
       flex-direction: column;

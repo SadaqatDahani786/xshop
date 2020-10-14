@@ -1,0 +1,22 @@
+.productsGrid{
+    // background: linear-gradient(to bottom, $colorThemePrimary 40%,$colorThemeTertiary,$colorThemeSecondary);    
+    width: 95%;
+    margin: 0 auto;        
+    &__wrap{        
+        // margin-top: -400px;        
+        background-color: $colorThemePrimary;    
+        box-shadow: 2rem 2rem 6rem rgba(1,1,1,.5);
+        z-index: 100;
+        position: relative;        
+    }    
+    &__grid{                    
+        padding: 4.5rem 0;        
+        width: 90%;
+        margin: 0 auto;                        
+        display: grid;
+        grid-template-columns: repeat(6,1fr);
+        column-gap: 1rem;        
+        row-gap: 1rem;
+        
+    }
+}

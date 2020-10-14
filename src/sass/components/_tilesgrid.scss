@@ -1,0 +1,30 @@
+.tilesgrid{
+    height: 100vh;    
+    position: relative;
+    &__wrap{
+        background-color: $colorOffWhite;
+        width: 95%;        
+        height: 100vh;
+        margin: 0 auto;
+        h2{            
+            background-color: $colorThemeSecondary;
+            padding: 2rem;
+        }
+    }
+    &__grid{
+        display: grid;        
+        width: 80%;
+        margin: 0 auto;
+        padding: 10rem 0;
+        grid-template-columns: repeat(6, 1fr);        
+        gap: .5rem;
+        div{                        
+            box-shadow: -1rem -2rem 6rem rgba(0,0,0,.1);
+            height: auto;
+            img{
+                width: 100%;                
+                
+            }
+        }
+    }
+}
