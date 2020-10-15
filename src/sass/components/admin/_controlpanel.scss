@@ -1,0 +1,22 @@
+.control_panel{
+    position: fixed;   
+    width: 16%;
+    height: 90vh;
+    background-color: $colorThemeSecondary;
+    bottom: 0;
+    left: 0;
+
+    &__heading{
+        padding: 1rem;     
+        color: $colorThemePrimary;   
+        font-weight: 600;
+        background-color: $colorThemeTertiary;
+    }
+    a{
+        color: $colorThemePrimary;
+        padding: .5rem;
+        background-color: $colorThemePrimary;
+        display: block;
+        color: $colorThemeSecondary;
+    }
+}

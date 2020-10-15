@@ -1,0 +1,11 @@
+button.button{
+    background-color: $colorThemeSecondary;
+    color: $colorThemePrimary;
+    padding: 1.5rem 3.5rem;
+    border-radius: .5rem;
+    font-size: 2rem;
+    cursor: pointer;
+    &:hover{
+        background-color: black;
+    }
+}

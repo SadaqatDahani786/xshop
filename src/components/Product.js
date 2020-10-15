@@ -13,12 +13,12 @@ class Product extends React.Component{
                         <div className="product__details__titlebox">
                             <h4>
                                 <a href="#d" className="product__titlebox--title">
-                                    {this.props.product.productName}
+                                    {this.props.product.product_name}
                                 </a>                                
                             </h4>
                         </div>
                         <h6 className="product__details__price">                            
-                            {this.props.product.productPrice}
+                            {this.props.product.product_price}
                             <i className="fa fa-dollar"></i>
                         </h6>                        
                         <a href="#cart" className="product__details__addtocartbtn">

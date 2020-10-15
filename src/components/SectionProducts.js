@@ -6,7 +6,7 @@ class SectionProducts extends React.Component{
         return(
             <div className="sectionproducts" style={{backgroundImage: `url(${this.props.bg})`}}>
                 <h2>{this.props.title}</h2>
-                <ProductsGrid/>
+                <ProductsGrid catID={this.props.catID}/>
             </div>
         );
     }

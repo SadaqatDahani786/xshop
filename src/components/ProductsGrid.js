@@ -7,13 +7,13 @@ class ProductsGrid extends React.Component{
     }
     
     componentDidMount(){        
-        const url = `http://localhost:4000/getproducts`;
+        const url = `http://localhost:4000/getproductsbycat${this.props.catID}`;
         
         fetch(url).then(res=>{
             return res.json();
         }).then(products=>{
             const productsJx = products.map(prod=>{
-                return <Product product={prod}/>
+                return <Product key={prod['_id']} product={prod}/>
             });            
             this.setState({products: productsJx});
         })
