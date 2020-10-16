@@ -5,9 +5,14 @@
     .form{                
         &__group{
             padding: 2rem;
-            width: 60%;
-            background-color: $colorOffWhite;
+            width: 60%;            
             margin: 0 auto;
+            
+            border-bottom: 1px solid rgba(1,1,1,.3);
+            border-left:  1px solid rgba(1,1,1,.3);;            
+            &:last-child{
+                background-color: $colorOffWhite;
+            }
             &__multiple{
                 display: flex;
                 justify-content: space-between;
@@ -15,7 +20,32 @@
                 &--right{
                     flex: 0 0 40%;
                 }
-            }            
+            }  
+            &__categories{
+                display: flex;
+                justify-content: flex-start;                
+                font-size: 2.5rem;
+                &__group{
+                    display: flex;    
+                    flex-wrap: wrap;
+                    flex-direction: column-reverse;                                    
+                    margin-right: 2rem;
+                    flex: 0 0 20%;                    
+                    background-color: $colorThemeSecondary;
+                    border-radius: 1.5rem;
+                    label.label-cat-name{
+                        background-color: $colorThemePrimary;
+                        color: red;
+                        text-align: center;
+                        text-transform: capitalize;
+                        font-size: 1.8rem;
+                        text-align: center;                       
+                    }
+                    input[type=checkbox]{                        
+                        display: inline-block;
+                    }                    
+                }
+            }          
             
             label{
                 font-size: 2.5rem;
@@ -37,12 +67,17 @@
                 font-style: italic;                
                 font-weight: 400;
             }
-            input[type="checkbox"]{
+            &__checkbox input[type="checkbox"]{
                 width: 2rem;                
                 position: absolute;
                 top: 60%;
                 margin-left: 3rem;
                 transform: translateY(-50%);
+            }
+            &__button{                
+                display: flex;                
+                justify-content: flex-start;
+                text-transform: uppercase;                
             }
         }
     }

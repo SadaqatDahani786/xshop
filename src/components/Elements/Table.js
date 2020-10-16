@@ -8,19 +8,19 @@ class Table extends React.Component{
                     <tr>
                         <th className="check-column"><input type="checkbox"/></th>
                         {this.props.columnHeadings.map(heading=>{
-                            return <th>{heading}</th>
+                            return (<th key={heading}>{heading}</th>)
                         })}
                     </tr>                        
                 </thead>
                 <tbody>                                            
                     {this.props.data.map(prod=>{
                         return (
-                            <tr>
-                                <td><input type="checkbox"/></td>
-                                <td>{prod.product_name}</td>
-                                <td>{prod.product_stock}</td>
-                                <td>{prod.product_price}</td>
-                                <td>{prod.product_description}</td>
+                            <tr key={prod.product_name+'\'s tr'}>
+                                <td> <input type="checkbox"/></td>
+                                <td> {prod.product_name}</td>
+                                <td> {prod.product_stock}</td>
+                                <td> {prod.product_price}</td>
+                                <td> {prod.product_description}</td>
                                 <td>{
                                     prod.product_categories.map((cat,ind)=>{
                                         return (ind === (prod.product_categories.length-1) ? cat['cat_name'] : cat['cat_name']+', ');
