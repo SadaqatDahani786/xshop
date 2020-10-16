@@ -7,7 +7,7 @@ class ProductPanel extends React.Component{
     state = {
         products: [],
         categories:[],
-        lightboxState: true,
+        lightboxState: false,
         formData: {
             name: '',
             stock: '1',
@@ -15,8 +15,7 @@ class ProductPanel extends React.Component{
             description: '',
             categories: [],
             featured: false
-        },
-        categoresListJsx: ''
+        }
     }     
 
     componentDidMount(){
@@ -38,19 +37,20 @@ class ProductPanel extends React.Component{
         
         fetch(catUrl).then(res=>{
             return res.json();
-        }).then(categories=>{            
-            this.setState({categories: categories});  
-            
+        }).then(categories=>{              
+
             //Categories And CheckBoxState                        
             const arrCat = categories.map(cat=>{                
-                return {'id':cat['_id'],'checkstate':false}; 
+                return {'_id':cat['_id'],'checkstate':false}; 
             });
             const cpyFormData = {...this.state.formData};
-            cpyFormData['categories'].length = 0;
-            setTimeout(()=>{                
-                this.setState({formData : cpyFormData});
-                alert('ran');
-            },2000);
+            cpyFormData['categories'] = arrCat;
+            this.setState({formData : cpyFormData});                
+
+            //Categories
+            this.setState({categories: categories});  
+            
+            
         })
         .catch(err=>{
             // this.setState({err: 'Error! Failed to get products from database.'})      
@@ -58,15 +58,86 @@ class ProductPanel extends React.Component{
         });        
     }
 
-    //Product Panel Buttons Handlers
-    handleClickAdd(){        
-        this.toggle();
+    
+    /*
+    ** ** 
+    ** ** ** ADD A NEW PRODUCT 
+    ** **
+    */        
+    handleClickAdd(e){        
+        e.preventDefault();
+
+        //Rest API Url
+        const url = 'http://localhost:4000/insertsingleproduct/';
+        //Filtering Categories
+        const cpyFormData = {...this.state.formData};  
+        cpyFormData['categories'] = this.state.formData['categories'].filter(cat=>{
+            return cat['checkstate'];
+        }).map(cat=>{
+            return cat['_id'];
+        });                      
+        //Sending A POST Request To Backend
+        fetch(url,{
+            method: 'POST', 
+            mode: 'cors', 
+            cache: 'no-cache',
+            credentials: 'same-origin', 
+            headers: {
+                // 'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type' : 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', 
+            body: JSON.stringify(cpyFormData)
+        })
+        .then(res=>{
+            return res.json();
+        })
+        .then(resJson=>{            
+
+            //setting up categories
+            let prod = resJson['inserted_product'];            
+            const categories = prod['cat_ids'].map(cat=>{
+                let index = this.state.categories.findIndex(val=>{
+                    return val['_id'] === cat;
+                });
+                return this.state.categories[index];
+            });
+
+            //changing product columns title to new values
+            const newProd = {
+                'product_categories' : categories,
+                'product_description': prod['productDescription'],
+                'product_featured': prod['productFeatured'],
+                'product_id' : prod['_id'],
+                'product_name': prod['productName'],
+                'product_price': prod['productPrice'],
+                'product_stock': prod['productStock']               
+            }            
+            
+            //Setting new product to the state
+            this.state.products.push(newProd);
+            this.setState({'lightboxState': false});
+
+            //Cleanup mess
+            this.clearFormData();
+            
+        })
+        .catch(err=>{
+            console.log(err);
+            // alert('Error! Failed to insert a product, please try again or contact administrator.')
+        });
+
     }
     handleClickUpdate(){        
         alert('Update');
     }
     handleClickDelete(){        
         alert('Delete');
+    }
+    
+    handleChange(e){
+        console.log(e);
     }
 
     /*
@@ -119,17 +190,36 @@ class ProductPanel extends React.Component{
         
     }
 
-
-    toggle(){
+    /*
+    ** **
+    ** ** ** Toggle LightBox State **
+    ** **
+    */
+    toggle(e){
+        e.preventDefault();
         this.setState({lightboxState : !this.state.lightboxState});
+    }     
+    /*
+    ** **
+    ** ** ** Clear Form Data **
+    ** **
+    */
+    clearFormData(){                
+        const cpyFormData = {...this.state.formData};
+        cpyFormData['name'] = ' ';
+        cpyFormData['price'] = 0.00;
+        cpyFormData['stock'] = 1;
+        cpyFormData['description'] = ' ';
+        cpyFormData['featured'] = false;
+        cpyFormData['categories'] = [];
     }
     
     render(){
     
         return(
             <div className="product_panel">
-                <Table columnHeadings={['Name','Stock','Price','Description','Categories','Featured']} data={this.state.products}/>                                
-                <Button handleClick={this.handleClickAdd.bind(this)}>Add Product</Button>
+                <Table columnHeadings={['Name','Stock','Price','Description','Categories','Featured']} data={this.state.products} changeHandler={this.handleChange.bind(this)}/>                                
+                <Button handleClick={this.toggle.bind(this)}>Add Product</Button>
                 <Button handleClick={this.handleClickUpdate.bind(this)}>Update Product</Button>
                 <Button handleClick={this.handleClickDelete.bind(this)}>Delete Product</Button>
                 <LightBox title={"Add New Product"} callback={this.toggle.bind(this)} show={this.state.lightboxState}>
@@ -163,7 +253,7 @@ class ProductPanel extends React.Component{
                             <div className="form__group__categories">                                                                   
                                 {                                                                                                                             
                                     this.state.categories.map((cat,ind)=>{                                                                                                            
-                                        this.state.formData['categories'].push({'_id':cat['_id'],'checkstate':false});                          
+                                        // this.state.formData['categories'].push({'_id':cat['_id'],'checkstate':false});                          
                                         return (                    
                                             <div key={cat['cat_name']} className="form__group__categories__group">
                                                 <label className="label-cat-name" htmlFor ={cat['cat_name']} value={cat['_id']}> {cat['cat_name']} </label>
@@ -185,7 +275,7 @@ class ProductPanel extends React.Component{
                         
                         <div className="form__group">
                             <div className="form__group__button">
-                                <Button handleClick={this.handleFormData.bind(this)} type="submit">
+                                <Button handleClick={this.handleClickAdd.bind(this)} type="submit">
                                     <span className="fa fa-plus"></span> Add
                                 </Button>
                                 <Button handleClick={this.toggle.bind(this)} type="submit">
