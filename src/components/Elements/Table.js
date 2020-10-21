@@ -2,71 +2,42 @@ import React from 'react';
 
 class Table extends React.Component{
     state = {
-        
+        checkboxstates : [],
+        products: []
     }  
 
-    constructor(props){
-        super(props);
-
-        console.log(props);        
-
-        const ckstates = props.data.map(prod=>{
-            return {                
-                '_id': prod['product_id'],
-                'checkstate': false
-            };
-        });           
-        this.state['checkboxstates'] = ckstates;
-        this.state['products'] = props.data;
-        
-    }
-
-    componentDidMount(){
-        const ckstates = this.props.data.map(prod=>{
-            return {                
-                '_id': prod['product_id'],
-                'checkstate': false
-            };
-        });   
-        const cpy= {...this.state};
-        cpy['checkboxstates'] = ckstates;
-        cpy['products'] = this.props.data;
-        this.setState({checkboxstates: cpy['checkboxstates'],products: cpy['products']});
-    }
-
-    // static getDerivedStateFromProps (props,prevstate){
-    //     const ckstates = props.data.map(prod=>{
-    //         return {                
-    //             '_id': prod['product_id'],
-    //             'checkstate': false
-    //         };
-    //     });                        
-
-    //     if(prevstate['checkboxstates'].length > 0){                    
-    //         console.log('NOT FIRST TIME, NO CHANGES')
-    //         console.log(prevstate['checkboxstates'].length);
-    //         return {...prevstate};        
-    //     }
-    //     else{        
-    //         console.log('FIRST TIME, DOING CHANGES');                            
-    //         console.log(prevstate['checkboxstates'].length);
-    //         return{...prevstate['checkboxstates'] = ckstates};
-    //     }               
-
-    // }
     handleChange(e){
-        e.preventDefault();        
-        const id = e.target.value;
-        const index = this.state.checkboxstates.findIndex((cb)=>{
-            return cb['_id'] === id;
-        });
-        
-        const cpyCheckboxstates = {...this.state.checkboxstates};
-        cpyCheckboxstates[index]['checkstate'] = !cpyCheckboxstates[index]['checkstate'];
-        
-        this.setState({checkboxstates: [],'n':'haha'},()=>{            
-        });
-        console.log(cpyCheckboxstates[index]['checkstate']);
+
+        //Checking For Checkbox All
+        if(e.target.name === 'ckbox-all'){
+            const updatedState = this.state.checkboxstates.map(ck=>{
+                ck['checkstate'] = e.target.checked === true ? true : false;
+                return ck;
+            });
+            this.setState({checkboxstates: updatedState});
+                        
+        }else{
+
+            //Find The Index OF Checkbox
+            const id = e.target.value;
+            const index = this.state.checkboxstates.findIndex((cb)=>{
+                return cb['_id'] === id;
+            });       
+
+            //Making a copy and doing the change
+            const cpyCheckboxstates = [...this.state.checkboxstates];
+            cpyCheckboxstates[index]['checkstate'] = !cpyCheckboxstates[index]['checkstate'];
+            
+            //Updating the state with new value
+            this.setState({checkboxstates: cpyCheckboxstates});      
+
+        }
+
+        //Calling callback and sending data back to parent
+        const dataToSend = this.state.checkboxstates.filter((ckstate)=>{
+            return ckstate['checkstate']; 
+        }).map(ck=> ck['_id']);
+        this.props.changeHandler(dataToSend);
     }
     render(){                
 
@@ -74,16 +45,25 @@ class Table extends React.Component{
             <table className="table">
                 <thead>
                     <tr>
-                        <th className="check-column"><input type="checkbox"/></th>
+                        <th className="check-column"><input type="checkbox" name="ckbox-all" onChange={this.handleChange.bind(this)}/></th>
                         {this.props.columnHeadings.map(heading=>{
                             return (<th key={heading}>{heading}</th>)
                         })}
                     </tr>                        
                 </thead>
                 <tbody>                                            
-                    {this.state.products.map((prod,ind)=>{                        
+                    {this.props.data.map((prod,ind)=>{                        
+                        
+                        //Preparing states for Checkbox to use
+                        if(this.state.checkboxstates.length < this.props.data.length ){
+                            this.state.checkboxstates.push({
+                                '_id': prod['product_id'],
+                                'checkstate': false
+                            });
+                        }
+                                                
                         return (
-                            <tr key={prod.product_name+'\'s tr'}>                                
+                            <tr key={prod.product_name+'\'s tr'}>                                   
                                 <td> <input type="checkbox" value={this.state.checkboxstates[ind]['_id']} checked={this.state.checkboxstates[ind]['checkstate']} onChange={this.handleChange.bind(this)}/></td>
                                 <td> {prod.product_name}</td>
                                 <td> {prod.product_stock}</td>

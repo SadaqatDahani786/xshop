@@ -8,6 +8,8 @@ class ProductPanel extends React.Component{
         products: [],
         categories:[],
         lightboxState: false,
+        lightboxTitle : '',
+        prodIdsToChange : [],
         formData: {
             name: '',
             stock: '1',
@@ -129,15 +131,23 @@ class ProductPanel extends React.Component{
         });
 
     }
-    handleClickUpdate(){        
-        alert('Update');
+
+    /*
+    ** ** 
+    ** ** ** UPDATE A PRODUCT 
+    ** **
+    */
+    handleClickUpdate(e){        
+        e.preventDefault();
+        // this.setState({lightboxState: true,lightboxTitle: 'Update A Product'});
+        
     }
     handleClickDelete(){        
         alert('Delete');
     }
     
-    handleChange(e){
-        console.log(e);
+    handleChange(idsList){
+        this.setState({prodIdsToChange: idsList});      
     }
 
     /*
@@ -196,7 +206,44 @@ class ProductPanel extends React.Component{
     ** **
     */
     toggle(e){
-        e.preventDefault();
+        e.preventDefault();   
+        this.clearFormData();         
+        
+        if(e.target.textContent === 'Add Product')
+            this.setState({lightboxTitle: 'Add A Product'});
+        if(e.target.textContent === 'Update Product')
+            if(this.state.prodIdsToChange.length <= 0 || this.state.prodIdsToChange.length > 1){
+                alert('Select a single product via checkbox to update product.');
+                return;
+            }
+            else if(this.state.prodIdsToChange.length === 1){
+                this.setState({lightboxTitle: 'Update A Product'});     
+                const index = this.state.products.findIndex(currProd=>{
+                    return currProd['product_id'] === this.state.prodIdsToChange[0];
+                });     
+                const cpyFormData = {...this.state.formData};
+                const pr = this.state.products[index];
+                
+                cpyFormData.name = pr['product_name'];
+                cpyFormData.price = pr['product_price'];
+                cpyFormData.stock = pr['product_stock'];
+                cpyFormData.description = pr['product_description'];
+                console.log(pr);
+                cpyFormData.categories = cpyFormData.categories.map(cat=>{
+                    const ind = pr['product_categories'].findIndex(find=> find['_id'] === cat['_id']);
+                    if(ind !== -1){
+                        console.log(ind);
+                        cat['checkstate'] = true;
+                        return cat;
+                    }
+                    return cat;
+                });
+                cpyFormData.featured = pr['product_featured'];
+
+                this.setState({formData: cpyFormData});
+            }                
+                            
+        
         this.setState({lightboxState : !this.state.lightboxState});
     }     
     /*
@@ -211,7 +258,11 @@ class ProductPanel extends React.Component{
         cpyFormData['stock'] = 1;
         cpyFormData['description'] = ' ';
         cpyFormData['featured'] = false;
-        cpyFormData['categories'] = [];
+        cpyFormData['categories'] = cpyFormData['categories'].map(cat=>{
+            cat['checkstate'] = false;
+            return cat;
+        });
+        this.setState({formData: cpyFormData});
     }
     
     render(){
@@ -220,14 +271,14 @@ class ProductPanel extends React.Component{
             <div className="product_panel">
                 <Table columnHeadings={['Name','Stock','Price','Description','Categories','Featured']} data={this.state.products} changeHandler={this.handleChange.bind(this)}/>                                
                 <Button handleClick={this.toggle.bind(this)}>Add Product</Button>
-                <Button handleClick={this.handleClickUpdate.bind(this)}>Update Product</Button>
+                <Button handleClick={this.toggle.bind(this)}>Update Product</Button>
                 <Button handleClick={this.handleClickDelete.bind(this)}>Delete Product</Button>
-                <LightBox title={"Add New Product"} callback={this.toggle.bind(this)} show={this.state.lightboxState}>
+                <LightBox title={this.state.lightboxTitle} callback={this.toggle.bind(this)} show={this.state.lightboxState}>
                     <form className="form">
                         
                         <div className="form__group">
                             <label>Name</label>
-                            <input type="text" name="name" placeholder="" onChange={this.handleFormData.bind(this)}/>                                                
+                            <input type="text" name="name" value={this.state.formData.name} placeholder="" onChange={this.handleFormData.bind(this)}/>                                                
                         </div>                        
 
                         <div className="form__group">
@@ -252,8 +303,7 @@ class ProductPanel extends React.Component{
                             <label>Categories</label>                            
                             <div className="form__group__categories">                                                                   
                                 {                                                                                                                             
-                                    this.state.categories.map((cat,ind)=>{                                                                                                            
-                                        // this.state.formData['categories'].push({'_id':cat['_id'],'checkstate':false});                          
+                                    this.state.categories.map((cat,ind)=>{                                                                                                                                                                            
                                         return (                    
                                             <div key={cat['cat_name']} className="form__group__categories__group">
                                                 <label className="label-cat-name" htmlFor ={cat['cat_name']} value={cat['_id']}> {cat['cat_name']} </label>
@@ -275,10 +325,10 @@ class ProductPanel extends React.Component{
                         
                         <div className="form__group">
                             <div className="form__group__button">
-                                <Button handleClick={this.handleClickAdd.bind(this)} type="submit">
+                                <Button handleClick={this.handleClickAdd.bind(this)}>
                                     <span className="fa fa-plus"></span> Add
                                 </Button>
-                                <Button handleClick={this.toggle.bind(this)} type="submit">
+                                <Button handleClick={this.toggle.bind(this)}>
                                     <span className="fa fa-close"></span> Close
                                 </Button>
                             </div>
