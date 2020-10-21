@@ -40,7 +40,7 @@ class Table extends React.Component{
         this.props.changeHandler(dataToSend);
     }
     render(){                
-
+        
         return(
             <table className="table">
                 <thead>
@@ -54,12 +54,15 @@ class Table extends React.Component{
                 <tbody>                                            
                     {this.props.data.map((prod,ind)=>{                        
                         
-                        //Preparing states for Checkbox to use
-                        if(this.state.checkboxstates.length < this.props.data.length ){
+                        //Preparing states for Checkbox to use                        
+                        if(this.state.checkboxstates.length < this.props.data.length){
+                            if(ind === 0)
+                                this.state.checkboxstates.length = 0;                                
                             this.state.checkboxstates.push({
                                 '_id': prod['product_id'],
                                 'checkstate': false
                             });
+ 
                         }
                                                 
                         return (

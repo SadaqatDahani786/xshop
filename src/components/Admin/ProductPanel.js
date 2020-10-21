@@ -9,6 +9,7 @@ class ProductPanel extends React.Component{
         categories:[],
         lightboxState: false,
         lightboxTitle : '',
+        lightboxBtnTitle: '',
         prodIdsToChange : [],
         formData: {
             name: '',
@@ -21,7 +22,7 @@ class ProductPanel extends React.Component{
     }     
 
     componentDidMount(){
-        const url = `http://localhost:4000/getproducts`;
+        const url = `http://localhost:5000/getproducts`;
         
         fetch(url).then(res=>{
             return res.json();
@@ -35,7 +36,7 @@ class ProductPanel extends React.Component{
 
 
         //GET CATEGORIES LIST
-        const catUrl = 'http://localhost:4000/get_categories_list';
+        const catUrl = 'http://localhost:5000/get_categories_list';
         
         fetch(catUrl).then(res=>{
             return res.json();
@@ -66,18 +67,22 @@ class ProductPanel extends React.Component{
     ** ** ** ADD A NEW PRODUCT 
     ** **
     */        
-    handleClickAdd(e){        
+    handleClickAddOrUpdate(e){        
         e.preventDefault();
 
         //Rest API Url
-        const url = 'http://localhost:4000/insertsingleproduct/';
+        const url = `http://localhost:5000/${this.state.lightboxTitle === 'Add A Product' ? 'insertsingleproduct' : 'updatesingleproduct'}/`;                
+        console.log('TITLE'+ this.state.lightboxTitle);
+        
         //Filtering Categories
         const cpyFormData = {...this.state.formData};  
         cpyFormData['categories'] = this.state.formData['categories'].filter(cat=>{
             return cat['checkstate'];
         }).map(cat=>{
             return cat['_id'];
-        });                      
+        });
+        if(this.state.lightboxTitle === 'Update A Product')
+            cpyFormData['_id'] = this.state.prodIdsToChange[0];
         //Sending A POST Request To Backend
         fetch(url,{
             method: 'POST', 
@@ -118,7 +123,18 @@ class ProductPanel extends React.Component{
             }            
             
             //Setting new product to the state
-            this.state.products.push(newProd);
+            if(this.state.lightboxTitle === 'Add A Product'){
+                this.state.products.push(newProd);
+            }else{
+                const index = this.state.products.findIndex(pr=>{
+                    console.log(`product: ${pr.product_id} | newProd: ${newProd.product_id}`);
+                    return pr.product_id === newProd.product_id;
+                });
+                const cpyProducts = [...this.state.products];
+                cpyProducts[index] = newProd;
+                this.setState({products: cpyProducts});
+                
+            }
             this.setState({'lightboxState': false});
 
             //Cleanup mess
@@ -211,6 +227,7 @@ class ProductPanel extends React.Component{
         
         if(e.target.textContent === 'Add Product')
             this.setState({lightboxTitle: 'Add A Product'});
+            this.setState({lightboxBtnTitle: 'Add Product'});
         if(e.target.textContent === 'Update Product')
             if(this.state.prodIdsToChange.length <= 0 || this.state.prodIdsToChange.length > 1){
                 alert('Select a single product via checkbox to update product.');
@@ -218,6 +235,7 @@ class ProductPanel extends React.Component{
             }
             else if(this.state.prodIdsToChange.length === 1){
                 this.setState({lightboxTitle: 'Update A Product'});     
+                this.setState({lightboxBtnTitle: 'Update Product'});
                 const index = this.state.products.findIndex(currProd=>{
                     return currProd['product_id'] === this.state.prodIdsToChange[0];
                 });     
@@ -227,8 +245,7 @@ class ProductPanel extends React.Component{
                 cpyFormData.name = pr['product_name'];
                 cpyFormData.price = pr['product_price'];
                 cpyFormData.stock = pr['product_stock'];
-                cpyFormData.description = pr['product_description'];
-                console.log(pr);
+                cpyFormData.description = pr['product_description'];                
                 cpyFormData.categories = cpyFormData.categories.map(cat=>{
                     const ind = pr['product_categories'].findIndex(find=> find['_id'] === cat['_id']);
                     if(ind !== -1){
@@ -325,8 +342,8 @@ class ProductPanel extends React.Component{
                         
                         <div className="form__group">
                             <div className="form__group__button">
-                                <Button handleClick={this.handleClickAdd.bind(this)}>
-                                    <span className="fa fa-plus"></span> Add
+                                <Button handleClick={this.handleClickAddOrUpdate.bind(this)}>
+                                    <span className="fa fa-plus"></span> {this.state.lightboxBtnTitle}
                                 </Button>
                                 <Button handleClick={this.toggle.bind(this)}>
                                     <span className="fa fa-close"></span> Close
