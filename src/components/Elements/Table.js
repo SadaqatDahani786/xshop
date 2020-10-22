@@ -6,6 +6,13 @@ class Table extends React.Component{
         products: []
     }  
 
+    static getDerivedStateFromProps(props, state) {
+        if(state.checkboxstates.length < props.data.length){                        
+            return {checkboxstates : []};            
+        }        
+        return null;
+    }    
+
     handleChange(e){
 
         //Checking For Checkbox All
@@ -56,8 +63,7 @@ class Table extends React.Component{
                         
                         //Preparing states for Checkbox to use                        
                         if(this.state.checkboxstates.length < this.props.data.length){
-                            if(ind === 0)
-                                this.state.checkboxstates.length = 0;                                
+                            // if(ind === 0)                            
                             this.state.checkboxstates.push({
                                 '_id': prod['product_id'],
                                 'checkstate': false

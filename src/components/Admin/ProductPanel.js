@@ -71,8 +71,7 @@ class ProductPanel extends React.Component{
         e.preventDefault();
 
         //Rest API Url
-        const url = `http://localhost:5000/${this.state.lightboxTitle === 'Add A Product' ? 'insertsingleproduct' : 'updatesingleproduct'}/`;                
-        console.log('TITLE'+ this.state.lightboxTitle);
+        const url = `http://localhost:5000/${this.state.lightboxTitle === 'Add A Product' ? 'insertsingleproduct' : 'updatesingleproduct'}/`;                        
         
         //Filtering Categories
         const cpyFormData = {...this.state.formData};  
@@ -126,8 +125,7 @@ class ProductPanel extends React.Component{
             if(this.state.lightboxTitle === 'Add A Product'){
                 this.state.products.push(newProd);
             }else{
-                const index = this.state.products.findIndex(pr=>{
-                    console.log(`product: ${pr.product_id} | newProd: ${newProd.product_id}`);
+                const index = this.state.products.findIndex(pr=>{                    
                     return pr.product_id === newProd.product_id;
                 });
                 const cpyProducts = [...this.state.products];
@@ -248,8 +246,7 @@ class ProductPanel extends React.Component{
                 cpyFormData.description = pr['product_description'];                
                 cpyFormData.categories = cpyFormData.categories.map(cat=>{
                     const ind = pr['product_categories'].findIndex(find=> find['_id'] === cat['_id']);
-                    if(ind !== -1){
-                        console.log(ind);
+                    if(ind !== -1){                        
                         cat['checkstate'] = true;
                         return cat;
                     }
