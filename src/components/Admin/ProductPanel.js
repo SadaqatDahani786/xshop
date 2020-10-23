@@ -148,18 +148,61 @@ class ProductPanel extends React.Component{
 
     /*
     ** ** 
-    ** ** ** UPDATE A PRODUCT 
+    ** ** ** DELETE PRODUCTS
     ** **
     */
-    handleClickUpdate(e){        
-        e.preventDefault();
-        // this.setState({lightboxState: true,lightboxTitle: 'Update A Product'});
+ 
+    handleClickDelete(){        
+        if(this.state.prodIdsToChange.length === -1) {
+            alert('Please select products to be delete via checkbox.');
+        }
+        else{
+            const ids =  this.state.prodIdsToChange.toString().replace(' ', ',');
+            const url = `http://localhost:5000/deleteproducts/${ids}`;
+            fetch(url,{
+                method: 'DELETE', 
+                mode: 'cors', 
+                cache: 'no-cache',
+                credentials: 'same-origin', 
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                    // 'Content-Type' : 'application/json'
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer',                 
+            })
+            .then(res=>{
+                return res.json();
+            })
+            .then(resJson=>{
+                if(resJson.deletedCount > 0){
+                    const deletedProductIds = resJson.deletedProductIds;
+                                        
+                    const updatedProducts = this.state.products.filter(pr=>{                        
+                        const index = deletedProductIds.indexOf(pr.product_id);                        
+                        return index !== -1 ? false : true;                        
+                    });                    
+                    
+                    this.setState({products: updatedProducts});
+
+                }else{
+                    alert('Error! Something went wrong with deleting products.');
+                }
+            })
+            .catch(err=>{
+                console.log(err);
+            });
+        }
+            
         
     }
-    handleClickDelete(){        
-        alert('Delete');
-    }
     
+
+    /*
+    ** ** 
+    ** ** ** CHECKBOX HANDLER FOR CHILD COMPONENT OF THIS COMPONENT
+    ** **
+    */
     handleChange(idsList){
         this.setState({prodIdsToChange: idsList});      
     }

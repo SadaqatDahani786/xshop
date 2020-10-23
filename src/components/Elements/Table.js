@@ -72,7 +72,7 @@ class Table extends React.Component{
                         }
                                                 
                         return (
-                            <tr key={prod.product_name+'\'s tr'}>                                   
+                            <tr key={prod.product_id+'\'s tr'}>                                   
                                 <td> <input type="checkbox" value={this.state.checkboxstates[ind]['_id']} checked={this.state.checkboxstates[ind]['checkstate']} onChange={this.handleChange.bind(this)}/></td>
                                 <td> {prod.product_name}</td>
                                 <td> {prod.product_stock}</td>
